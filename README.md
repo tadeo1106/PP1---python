@@ -1,1 +1,1 @@
-respositorio dividido por ramas una para cada actividad
+actividad 02 Practicos de Fastapi
