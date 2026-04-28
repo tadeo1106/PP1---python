@@ -17,7 +17,7 @@ app = FastAPI()
 @app.get("/pelicula")
 async def filtrar_genero(
         genero: str = Query(description="porque genero desea filtrar?",default=None),
-        ordenar: str =Query(description="porq desea ordenar por anio o titulo",default=None)
+        ordenar: str =Query(description="porq desea ordenar por año o titulo",default=None)
 ):
     peliculas_filtradas=peliculas
 
@@ -29,10 +29,10 @@ async def filtrar_genero(
     if ordenar:
         if ordenar == "titulo":
             peliculas_filtradas=sorted(peliculas_filtradas,key=lambda x:x["titulo"])
-        elif ordenar == "anio":
+        elif ordenar == "año":
             peliculas_filtradas=sorted(peliculas_filtradas,key=lambda x:x["año"])
 
-    return peliculas_filtradas if peliculas_filtradas else {"error":"no encontrado"}
+    return peliculas_filtradas if peliculas_filtradas else {"detail":"no encontrado"}
 
 
 
@@ -43,7 +43,7 @@ async def pelicula_id(
 
     resultado=[pelicula for pelicula in peliculas
             if pelicula["id"]==id]
-    return resultado if resultado else {"error": "id no encontrado"}
+    return resultado if resultado else {"detail": "id no encontrado"}
 
 
 
@@ -55,11 +55,9 @@ async def agregar_pelicula(
 
 
     if not titulo.strip() or not genero.strip():
-        return {"error": "no puede estar vacio"}
+        return {"detail": "no puede estar vacio"}
     
     id=max(peliculas,key=lambda x:x["id"])["id"]+1
-
-
 
 
     pelicula={
@@ -70,7 +68,7 @@ async def agregar_pelicula(
     
     peliculas.append(pelicula)
 
-    return {"correcto":pelicula}        
+    return {"detail":"todo correcto","pelicula añadida":pelicula}        
 
 
 
@@ -88,9 +86,9 @@ async def modificar_pelicula(
             pelicula["año"]=año
             pelicula["genero"]=genero
 
-            return {"detail":"modificacion echas correctamente","pelicula":pelicula}
+            return {"detail":"modificacion echas correctamente","pelicula modificada":pelicula}
         
-    return{"detail":"id no encontrado"}
+        return{"detail":"id no encontrado"}
 
 
 
@@ -108,4 +106,4 @@ async def borrar_pelicula(
                 peliculas.remove(pelicula)
             return {"detail":"borrado correctamente","peliculas":peliculas}
                     
-    return{"detail":"id no encontrado","peliculas":peliculas}
+        return{"detail":"id no encontrado"}
