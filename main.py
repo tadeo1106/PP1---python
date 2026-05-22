@@ -36,7 +36,7 @@ class PeliculasSchemas(BaseModel):
     activo : configSchemasEstados
 
 
-class PeliculaUpdaOrNewteSchemas(BaseModel):
+class PeliculaCreateUpdateSchemas(BaseModel):
     titulo:configSchemaTitulos
     año : configSchemaAño
     genero : configSchemaGeneros
@@ -95,7 +95,7 @@ async def pelicula_by_id( id:path_id):
 
 
 @app.post("/pelicula",response_model=PeliculasSchemas)
-async def agregar_pelicula(pelicula:PeliculaUpdaOrNewteSchemas):
+async def agregar_pelicula(pelicula:PeliculaCreateUpdateSchemas):
 
     id=max(peliculas,key=lambda x:x["id"])["id"]+1
 
@@ -112,7 +112,7 @@ async def agregar_pelicula(pelicula:PeliculaUpdaOrNewteSchemas):
 @app.put("/pelicula/{id}",response_model=PeliculasSchemas,responses=not_found)
 async def modificar_pelicula(
     id:path_id,
-    pelicula_editar:PeliculaUpdaOrNewteSchemas
+    pelicula_editar:PeliculaCreateUpdateSchemas
     ):
     for pelicula in peliculas:
         if pelicula["id"] == id:
