@@ -1,1 +1,0 @@
-respositorio dividido por ramas una para cada actividad
