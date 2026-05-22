@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Query,Path,Body
+from fastapi import FastAPI,Query,Path
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Path, Query
@@ -11,7 +11,7 @@ peliculas = [
 ]
 
 
-configSchemasID=Annotated[int , Field(gt=0,description='id del articulo')]
+configSchemasID=Annotated[int , Field(gt=0,description="id del articulo")]
 
 configSchemaTitulos=Annotated[str,Field(max_length=40)]
 
@@ -19,13 +19,11 @@ configSchemaAño = Annotated[int,Field(gt=1900)]
 
 configSchemaGeneros = Annotated[str,Field(min_length=4)]
 
-configSchemasEstados = Annotated[bool,Field( description= 'disponibilidad')]
+configSchemasEstados = Annotated[bool,Field( description= "disponibilidad")]
 
 
 
-pathID=Annotated[int,Path(gt=0, description="id mayor a 0")]
-
-QueryEstado=Annotated[bool,Query(description="mantener registro",default=True)]
+path_id=Annotated[int,Path(gt=0, description="id mayor a 0")]
 
 
 
@@ -38,12 +36,12 @@ class PeliculasSchemas(BaseModel):
     activo : configSchemasEstados
 
 
-class PeliculaUpdateSchemas(BaseModel):
-
+class PeliculaUpdaOrNewteSchemas(BaseModel):
     titulo:configSchemaTitulos
     año : configSchemaAño
     genero : configSchemaGeneros
     activo : configSchemasEstados
+
 
 
 
@@ -66,7 +64,7 @@ app = FastAPI()
 
 
 @app.get("/pelicula", response_model=list[PeliculasSchemas])
-async def filtrar_genero(
+async def mostrar_pelicula(
         genero: str = Query(description="porque genero desea filtrar?",default=None),
         ordenar: str =Query(description="porq desea ordenar por año o titulo",default=None)
 ):
@@ -83,69 +81,57 @@ async def filtrar_genero(
         elif ordenar == "año":
             peliculas_filtradas=sorted(peliculas_filtradas,key=lambda x:x["año"])
 
-    return peliculas_filtradas if peliculas_filtradas else {"detail":"no encontrado"}
+    return peliculas_filtradas
 
 
 
-@app.get("/pelicula/{id}", response_model=PeliculasSchemas, responses= not_found)
-async def pelicula_by_id( id:pathID):
-
-    resultado=[pelicula for pelicula in peliculas
-            if pelicula["id"]==id]
-    if resultado:
-        return resultado
-    raise HTTPException(status_code=404,detail='id no encontraado')
+@app.get("/pelicula/{id}", response_model=PeliculasSchemas,responses= not_found)
+async def pelicula_by_id( id:path_id):
+    for pelicula in peliculas:
+        if pelicula["id"]==id:
+            return pelicula
+    raise HTTPException(status_code=404,detail="id no encontrado")
 
 
 
-@app.post("/pelicula")
-async def agregar_pelicula(
-    titulo: configSchemaTitulos,
-    año: configSchemaAño,
-    genero: configSchemaGeneros):   
+@app.post("/pelicula",response_model=PeliculasSchemas)
+async def agregar_pelicula(pelicula:PeliculaUpdaOrNewteSchemas):
 
-
-    if not titulo.strip() or not genero.strip():
-        return {"detail": "no puede estar vacio"}
-    
     id=max(peliculas,key=lambda x:x["id"])["id"]+1
 
+    nueva_pelicula=(pelicula.model_dump())
 
-    pelicula={
-        "id":id,
-        "titulo":titulo,
-        "año": año,
-        "genero":genero}
+    nueva_pelicula["id"]=id
+
+    peliculas.append(nueva_pelicula)
     
-    peliculas.append(pelicula)
-
-    return {"detail":"todo correcto","pelicula añadida":pelicula}        
+    return nueva_pelicula      
 
 
 
 @app.put("/pelicula/{id}",response_model=PeliculasSchemas,responses=not_found)
 async def modificar_pelicula(
-    id:pathID,
-    pelicula_editar=PeliculaUpdateSchemas
+    id:path_id,
+    pelicula_editar:PeliculaUpdaOrNewteSchemas
     ):
     for pelicula in peliculas:
         if pelicula["id"] == id:
-            pelicula["id"]=pelicula_editar.titulo
             pelicula["titulo"]=pelicula_editar.titulo
             pelicula["año"]=pelicula_editar.año
             pelicula["genero"]=pelicula_editar.genero
+            pelicula["activo"]=pelicula_editar.activo
             
 
-            return {"detail":"modificacion echas correctamente","pelicula modificada":pelicula}
+            return pelicula
         
-        raise HTTPException(status_code=404, detail="Pelicula no encontrada")
+    raise HTTPException(status_code=404, detail="Pelicula no encontrada")
 
 
 
-@app.delete("/pelicula/{id}")
+@app.delete("/pelicula/{id}", responses=not_found)
 async def borrar_pelicula(
-    id: pathID,
-    logico: QueryEstado
+    id: path_id,
+    logico:Annotated[bool,Query(description="mantener registro?")]=True
     ):
 
     for pelicula in peliculas:
@@ -156,4 +142,4 @@ async def borrar_pelicula(
                 peliculas.remove(pelicula)
             return {"detail":"borrado correctamente","peliculas":peliculas}
                     
-        return{"detail":"id no encontrado"}
+    raise HTTPException(status_code=404,detail="no encontrado")
