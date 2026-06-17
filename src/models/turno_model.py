@@ -5,6 +5,8 @@ from typing import Annotated
 
 configSchemasID=Annotated[int , Field(gt=0,description="id del cliente")]
 
+configSchemaDocumento=Annotated[int,Field(gt=6)]
+
 configSchemaCliente=Annotated[str,Field(min_length=3,max_length=20)]
 
 configSchemaDia = Annotated[str,Field(min_length=5, max_length=9)]
@@ -16,16 +18,19 @@ configSchemasServicio = Annotated[list,Field(min_length=1,description="servicios
 
 
 
+
 class TurnoSchemas(BaseModel):
 
     id : configSchemasID
+    documento:configSchemaDocumento
     cliente:configSchemaCliente
     dia : configSchemaDia
     horario : configSchemaHorario
     servicio : configSchemasServicio
 
 
-class TurnoCreateUpdateSchemas(BaseModel): 
+class TurnoCreateUpdateSchemas(BaseModel):
+    documento:configSchemaDocumento 
     cliente:configSchemaCliente
     dia : configSchemaDia
     horario : configSchemaHorario

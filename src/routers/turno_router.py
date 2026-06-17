@@ -1,12 +1,12 @@
 from typing import Annotated
 
-from src.models.turno_model import TurnoSchemas,TurnoCreateUpdateSchemas
+from models.turno_model import TurnoSchemas,TurnoCreateUpdateSchemas
 
 from fastapi import APIRouter, HTTPException ,Query,Path 
 
-from src.database.db import turnos 
+from database.db import turnos 
 
-from src.core.exceptions import not_found
+from core.exceptions import not_found,not_found_dni
 
 router=APIRouter()
 
@@ -38,6 +38,19 @@ async def turno_by_id( id:path_id):
 
 
 
+
+
+@router.get("/turnos/dni/{dni}",response_model=TurnoSchemas,responses=not_found_dni)
+async def turno_by_dni(dni:int):
+    for turno in turnos:
+        if turno["documento"]==dni:
+            return turno
+    raise HTTPException(status_code=404,detail="DNI no encontrado")
+
+
+
+
+
 @router.post("/turnos",response_model=TurnoCreateUpdateSchemas)
 async def agregar_turno(turno:TurnoCreateUpdateSchemas):
 
@@ -60,6 +73,7 @@ async def modificar_turno(
     ):
     for turno in turnos:
         if turno["id"] == id:
+            turno["documento"]=turno_editar.documento
             turno["cliente"]=turno_editar.cliente
             turno["dia"]=turno_editar.dia
             turno["horario"]=turno_editar.horario
