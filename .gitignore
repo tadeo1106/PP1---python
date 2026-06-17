@@ -1,1 +1,4 @@
 **/FastAPI
+venv
+.vscode
+__pycache__
