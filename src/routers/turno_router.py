@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException ,Query,Path
 
 from database.db import turnos 
 
-from core.exceptions import not_found,not_found_dni
+from core.exceptions import not_found,not_found_dni,conflict
 
 router=APIRouter()
 
@@ -50,9 +50,13 @@ async def turno_by_dni(dni:int):
 
 
 
-
-@router.post("/turnos",response_model=TurnoCreateUpdateSchemas)
+@router.post("/turnos",response_model=TurnoSchemas,responses=conflict)
 async def agregar_turno(turno:TurnoCreateUpdateSchemas):
+
+    for t in turnos:
+        if t["dia"].lower() ==  turno.dia.lower() and t["horario"]==turno.horario:
+            raise HTTPException(status_code=409,detail="ya hay un turno para ese dia y esa hora ")
+        
 
     id=max(turnos,key=lambda x:x["id"])["id"]+1
 

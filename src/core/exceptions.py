@@ -25,3 +25,15 @@ not_found_dni={
         },
     },
 }
+
+
+conflict = {
+    409: {
+        "description": "Conflicto turnos",
+        "content": {
+            "application/json": {
+                "example": {"detail": "Ya hay un turno para ese día y esa hora"}
+            }
+        }
+    }
+}

@@ -5,7 +5,7 @@ from typing import Annotated
 
 configSchemasID=Annotated[int , Field(gt=0,description="id del cliente")]
 
-configSchemaDocumento=Annotated[int,Field(gt=6)]
+configSchemaDocumento=Annotated[str,Field(min_length=7)]
 
 configSchemaCliente=Annotated[str,Field(min_length=3,max_length=20)]
 
