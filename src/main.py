@@ -2,9 +2,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from database.bd import engine, Base
-from models import turno_model
-from routers.turno_router import router
+from src.database.bd import engine, Base
+from src.models import turno_model
+from src.routers.turno_router import router
 
 Base.metadata.create_all(bind=engine)
 

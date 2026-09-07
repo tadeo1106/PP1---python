@@ -1,3 +1,35 @@
-venv
-__pycache__
-.vscode
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Archivos generados por Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Herramientas y configuracion local del editor
+.vscode/
+.idea/
+
+# Bases de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Variables de entorno y secretos locales
+.env
+.env.*
+!.env.example
+
+# Cobertura, tests y herramientas de desarrollo
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
