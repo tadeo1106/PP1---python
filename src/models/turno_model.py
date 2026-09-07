@@ -6,7 +6,7 @@ from src.database.bd import Base
 class Turno(Base):
     __tablename__ = "turnos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
 
     cliente_nombre = Column(String)
 

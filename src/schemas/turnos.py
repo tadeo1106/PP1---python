@@ -1,5 +1,4 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, ConfigDict  # noqa: I001
 from datetime import date, time
 
 from .tipos import (
@@ -22,14 +21,9 @@ class TurnoBase(BaseModel):
 class TurnoCreate(TurnoBase):
     pass
 
-class TurnoUpdate(BaseModel):
-    cliente_nombre: Optional[configSchemaNombre] = None
-    cliente_dni: Optional[configSchemaDni] = None
-    servicio_nombre: Optional[configSchemaNombreServicio] = None
-    fecha: Optional[date] = None
-    hora: Optional[time] = None
-    estado: Optional[configSchemaEstado] = None
-
+class TurnoUpdate(TurnoBase):
+    pass
+ 
 class TurnoResponse(TurnoBase):
     id: configSchemasID
     estado: configSchemaEstado

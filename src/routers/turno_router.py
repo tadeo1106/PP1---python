@@ -17,6 +17,16 @@ async def  obtener_turnos(db: Session = Depends(get_db)):  # noqa: B008
     return turnos
 
 
+@router.get("/{id}",response_model=schemas_turnos.TurnoResponse,responses=exceptions.not_found)
+async def obtener_turnos_por_id(turno_id:int,db:Session=Depends(get_db)): # noqa: B008
+
+    turno=db.query(Turno).filter(Turno.id == turno_id).first()
+
+    if not turno:
+        raise HTTPException(status_code=404, detail=exceptions.not_found)
+    return turno
+
+
 @router.post(
     "/", response_model=schemas_turnos.TurnoResponse, responses=exceptions.conflict
 )
@@ -35,7 +45,7 @@ async def crear_turno(turno: schemas_turnos.TurnoCreate, db: Session = Depends(g
     db.add(nuevo_turno)
     db.commit()
     db.refresh(nuevo_turno)
-
+  
     return nuevo_turno
 
 
@@ -52,10 +62,15 @@ async def borrar_turno(turno_id: int, db: Session = Depends(get_db), responses=e
     return {"mensaje": f"Turno {turno_id} cancelado correctamente"}
 
 
+
+
+@router.put("/{id}")
 async def actualizar_turno_completo(
     turno_id: int,
     datos_actualizar: schemas_turnos.TurnoUpdate,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: Session = Depends(get_db),  # noqa: B008,
+    responses=exceptions.not_found,
+    response_model=schemas_turnos.TurnoResponse
 ):
 
     turno_guardado = db.query(Turno).filter(Turno.id == turno_id).first()

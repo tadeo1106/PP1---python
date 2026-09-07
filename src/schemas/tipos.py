@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
+from datetime import time
 from typing import Annotated
-from datetime import date, time
 
+from pydantic import Field
 
 configSchemasID = Annotated[int, Field(gt=0, description="ID numérico en la base de datos")]
 configSchemaDocumento = Annotated[str, Field(min_length=7, description="DNI del cliente")]
