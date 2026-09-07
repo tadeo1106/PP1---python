@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Date, Integer, String, Time
+
 from src.database.bd import Base
+
 
 class Turno(Base):
     __tablename__ = "turnos"
@@ -15,5 +17,5 @@ class Turno(Base):
     fecha = Column(Date)
 
     hora = Column(Time)
-    
+
     estado = Column(String, default="Pendiente")
