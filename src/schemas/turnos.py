@@ -1,18 +1,21 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, Field
+from typing import List, Optional
 
-from schemas.tipos import (
+from .tipos import (
     configSchemaDia,
-    configSchemaEstado,
-    configSchemasID,
     configSchemaHorario,
+    configSchemaDocumento,
+    configSchemaEstado,
+    configSchemaNombre,
+    configSchemasID,
 )
 
 class TurnoBase(BaseModel):
-    cliente_id: configSchemasID
-    servicio_id: configSchemasID 
+    documento: configSchemaDocumento
+    cliente: configSchemaNombre
     dia: configSchemaDia
     horario: configSchemaHorario
+    servicio: List[str] = Field(min_length=1)
 
 
 class TurnoCreate(TurnoBase):
@@ -20,11 +23,11 @@ class TurnoCreate(TurnoBase):
 
 
 class TurnoUpdate(BaseModel):
-    cliente_id: Optional[configSchemasID] = None
-    servicio_id: Optional[configSchemasID] = None
+    documento: Optional[configSchemaDocumento] = None
+    cliente: Optional[configSchemaNombre] = None
     dia: Optional[configSchemaDia] = None
     horario: Optional[configSchemaHorario] = None
-    estado: Optional[configSchemaEstado] = None
+    servicio: Optional[List[str]] = None
 
 
 class TurnoResponse(TurnoBase):

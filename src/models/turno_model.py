@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,Date,Time
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship
-from database.db import Base
+from ..database.bd import  Base
 
 class Cliente(Base):
     __tablename__ = "clientes"
@@ -23,7 +23,7 @@ class Turno(Base):
     id = Column(Integer, primary_key=True, index=True)
     dia = Column(String)
     fecha = Column(Date)
-    hora = Column(Time)
+    horario = Column("hora", Time)
     estado = Column(String, default="pendiente")
     cliente_id = Column(Integer, ForeignKey("clientes.id"))
     servicio_id = Column(Integer, ForeignKey("servicios.id"))

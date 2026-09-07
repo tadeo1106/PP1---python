@@ -9,7 +9,7 @@ configSchemaNombre = Annotated[str, Field(min_length=3, max_length=50, descripti
 configSchemaNombreServicio = Annotated[str, Field(min_length=3, max_length=100, description="Nombre del servicio")]
 
 
-configSchemaDia = Annotated[date, Field(description="Fecha del turno, formato AAAA-MM-DD")]
+configSchemaDia = Annotated[str, Field(min_length=1, description="Dia del turno")]
 configSchemaHorario = Annotated[time, Field(description="Horario del turno, formato HH:MM")]
 
 configSchemaEstado = Annotated[str, Field(description="Estado actual del turno")]
