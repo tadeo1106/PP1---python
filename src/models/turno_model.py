@@ -1,37 +1,33 @@
-from pydantic import BaseModel, Field
-from typing import Annotated
+from sqlalchemy import Column, Integer, String, ForeignKey,Date,Time
+from sqlalchemy.orm import relationship
+from database.db import Base
+
+class Cliente(Base):
+    __tablename__ = "clientes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    dni = Column(String, unique=True)
+    nombre = Column(String)
 
 
+class Servicio(Base):
+    __tablename__ = "servicios"
 
-configSchemasID=Annotated[int , Field(gt=0,description="id del cliente")]
-
-configSchemaDocumento=Annotated[str,Field(min_length=7)]
-
-configSchemaCliente=Annotated[str,Field(min_length=3,max_length=20)]
-
-configSchemaDia = Annotated[str,Field(min_length=5, max_length=9)]
-
-configSchemaHorario = Annotated[str,Field(min_length=5 ,description="horario del turno ej: 18:30")]
-
-configSchemasServicio = Annotated[list,Field(min_length=1,description="servicios ej:[corte,barba]")]
+    id = Column(Integer, primary_key=True, index=True)
+    nombre_servicio = Column(String) 
 
 
+class Turno(Base):
+    __tablename__ = "turnos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    dia = Column(String)
+    fecha = Column(Date)
+    hora = Column(Time)
+    estado = Column(String, default="pendiente")
+    cliente_id = Column(Integer, ForeignKey("clientes.id"))
+    servicio_id = Column(Integer, ForeignKey("servicios.id"))
 
 
-
-class TurnoSchemas(BaseModel):
-
-    id : configSchemasID
-    documento:configSchemaDocumento
-    cliente:configSchemaCliente
-    dia : configSchemaDia
-    horario : configSchemaHorario
-    servicio : configSchemasServicio
-
-
-class TurnoCreateUpdateSchemas(BaseModel):
-    documento:configSchemaDocumento 
-    cliente:configSchemaCliente
-    dia : configSchemaDia
-    horario : configSchemaHorario
-    servicio : configSchemasServicio
+    cliente = relationship("Cliente")
+    servicio = relationship("Servicio")
