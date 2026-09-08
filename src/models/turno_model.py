@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Date, Integer, String, Time
 
-from src.database.bd import Base
+from src.database.database import Base
 
 
 class Turno(Base):

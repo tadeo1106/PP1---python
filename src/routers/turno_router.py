@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.core import exceptions
-from src.database.bd import get_db
+from src.database.database import get_db
 from src.models.turno_model import Turno
 from src.schemas import turnos as schemas_turnos
 
@@ -17,8 +17,8 @@ async def  obtener_turnos(db: Session = Depends(get_db)):  # noqa: B008
     return turnos
 
 
-@router.get("/{id}",response_model=schemas_turnos.TurnoResponse,responses=exceptions.not_found)
-async def obtener_turnos_por_id(turno_id:int,db:Session=Depends(get_db)): # noqa: B008
+@router.get("/{turno_id}", response_model=schemas_turnos.TurnoResponse, responses=exceptions.not_found)
+async def obtener_turnos_por_id(turno_id: int, db: Session = Depends(get_db)):  # noqa: B008
 
     turno=db.query(Turno).filter(Turno.id == turno_id).first()
 
@@ -49,8 +49,8 @@ async def crear_turno(turno: schemas_turnos.TurnoCreate, db: Session = Depends(g
     return nuevo_turno
 
 
-@router.delete("/{turno_id}")
-async def borrar_turno(turno_id: int, db: Session = Depends(get_db), responses=exceptions.not_found):  # noqa: B008
+@router.delete("/{turno_id}", responses=exceptions.not_found)
+async def borrar_turno(turno_id: int, db: Session = Depends(get_db)):  # noqa: B008
     turno_guardado = db.query(Turno).filter(Turno.id == turno_id).first()
 
     if not turno_guardado:
@@ -59,18 +59,16 @@ async def borrar_turno(turno_id: int, db: Session = Depends(get_db), responses=e
     db.delete(turno_guardado)
     db.commit()
 
-    return {"mensaje": f"Turno {turno_id} cancelado correctamente"}
+    return {"mensaje": "turno borrado correctamente "}
 
 
 
 
-@router.put("/{id}")
+@router.put("/{turno_id}", response_model=schemas_turnos.TurnoResponse, responses=exceptions.not_found)
 async def actualizar_turno_completo(
     turno_id: int,
     datos_actualizar: schemas_turnos.TurnoUpdate,
-    db: Session = Depends(get_db),  # noqa: B008,
-    responses=exceptions.not_found,
-    response_model=schemas_turnos.TurnoResponse
+    db: Session = Depends(get_db),  # noqa: B008
 ):
 
     turno_guardado = db.query(Turno).filter(Turno.id == turno_id).first()
