@@ -1,4 +1,4 @@
-# Entornos virtuales
+
 .venv
 __pycache__/
 .vscode/
