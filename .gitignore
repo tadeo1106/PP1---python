@@ -1,6 +1,6 @@
-# Entornos virtuales
+
 .venv
 __pycache__/
 .vscode/
 .db
-
+db_turnos_sqlmodel.db

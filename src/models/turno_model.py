@@ -1,21 +1,24 @@
-from sqlalchemy import Column, Date, Integer, String, Time
+from datetime import date, time
 
-from src.database.database import Base
+from sqlmodel import Field, SQLModel
 
 
-class Turno(Base):
-    __tablename__ = "turnos"
+class TurnoBase(SQLModel):
+    cliente_nombre: str
+    cliente_dni: str
+    servicio_nombre: str
+    fecha: date
+    hora: time
+    estado: str = "Pendiente"
 
-    id = Column(Integer, primary_key=True)
 
-    cliente_nombre = Column(String)
+class Turno(TurnoBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
 
-    cliente_dni = Column(String)
 
-    servicio_nombre = Column(String)
+class TurnoCreate(TurnoBase):
+    pass
 
-    fecha = Column(Date)
 
-    hora = Column(Time)
-
-    estado = Column(String, default="Pendiente")
+class TurnoResponse(TurnoBase):
+    id: int
