@@ -10,4 +10,4 @@ SQLModel.metadata.create_all(bind=engine)
 app = FastAPI(title="turnosApi")
 
 
-app.include_router(router, tags=["turnos"], prefix="")
+app.include_router(router, prefix="")

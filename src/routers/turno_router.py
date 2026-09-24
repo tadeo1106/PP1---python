@@ -14,18 +14,14 @@ async def obtener_turnos(db: Session = Depends(get_db)):  # noqa: B008
     return turnos
 
 
-@router.get(
-    "/{turno_id}",
-    response_model=TurnoResponse,
-    responses=exceptions.not_found,
-)
+@router.get("/{turno_id}", response_model=TurnoResponse, responses=exceptions.not_found)
 async def obtener_turno(turno_id: int, db: Session = Depends(get_db)):  # noqa: B008
-
     turno = db.get(Turno, turno_id)
+
     if not turno:
         raise HTTPException(status_code=404, detail=exceptions.not_found)
-    return turno
 
+    return turno
 
 @router.post("/", response_model=TurnoResponse, responses=exceptions.conflict)
 async def crear_turno(turno_nuevo: TurnoCreate, db: Session = Depends(get_db)):  # noqa: B008

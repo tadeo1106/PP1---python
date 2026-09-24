@@ -4,3 +4,7 @@ __pycache__/
 .vscode/
 .db
 db_turnos_sqlmodel.db
+
+alembic.ini
+migrations/env.pyc
+migrations/__pycache__/
