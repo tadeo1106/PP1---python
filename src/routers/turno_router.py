@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from src.core import exceptions
 from src.database.database import get_db
@@ -8,10 +8,38 @@ from src.models.turno_model import Turno, TurnoCreate, TurnoResponse
 router = APIRouter(prefix="/turnos", tags=["Turnos"])
 
 
+from datetime import date
+
+
 @router.get("/", response_model=list[TurnoResponse])
-async def obtener_turnos(db: Session = Depends(get_db)):  # noqa: B008
-    turnos = db.exec(select(Turno)).all()
-    return turnos
+async def obtener_turnos(
+    desde: date | None = None,
+    hasta: date | None = None,
+    nombre: str | None = None,
+    dni: str | None = None,
+    servicio: str | None = None,
+    db: Session = Depends(get_db),  # noqa: B008
+):
+    if desde and hasta and desde > hasta:
+        raise HTTPException(
+            status_code=400, detail="'desde' no puede ser posterior a 'hasta'"
+        )
+
+    consulta = select(Turno)
+    if servicio:
+        consulta = consulta.where(Turno.servicio_nombre == servicio)
+    if dni:
+        consulta = consulta.where(Turno.cliente_dni == dni)
+    if nombre:
+        consulta = consulta.where(col(Turno.cliente_nombre).ilike(f"%{nombre}%"))
+    if desde:
+        consulta = consulta.where(Turno.fecha >= desde)
+    if hasta:
+        consulta = consulta.where(Turno.fecha <= hasta)
+
+    consulta = consulta.order_by(Turno.fecha, Turno.hora)  # pyright: ignore[reportArgumentType]
+
+    return db.exec(consulta).all()
 
 
 @router.get("/{turno_id}", response_model=TurnoResponse, responses=exceptions.not_found)
@@ -22,6 +50,7 @@ async def obtener_turno(turno_id: int, db: Session = Depends(get_db)):  # noqa: 
         raise HTTPException(status_code=404, detail=exceptions.not_found)
 
     return turno
+
 
 @router.post("/", response_model=TurnoResponse, responses=exceptions.conflict)
 async def crear_turno(turno_nuevo: TurnoCreate, db: Session = Depends(get_db)):  # noqa: B008
