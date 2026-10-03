@@ -14,12 +14,14 @@ def validar_dni(dni: str, db: Session):
     consulta = select(Usuario).where(Usuario.dni == dni)
     resultado = db.exec(consulta)
     if resultado.first():
-        raise HTTPException(status_code=400, detail=exceptions.DNI_DUPLICADO)
+        raise HTTPException(status_code=409, detail=exceptions.DNI_DUPLICADO)
 
 
 @router.get("/", response_model=list[UsuarioResponse])
 async def obtener_usuarios(
-    nombre: str | None = None, dni: str | None = None, db: Session = Depends(get_db)
+    nombre: str | None = None,
+    dni: str | None = None,
+    db: Session = Depends(get_db),  # noqa: B008
 ):
     consulta = select(Usuario)
     if nombre:
@@ -30,8 +32,12 @@ async def obtener_usuarios(
     return resultado.all()
 
 
-@router.get("/{usuario_id}", response_model=UsuarioResponseNested)
-async def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
+@router.get(
+    "/{usuario_id}",
+    response_model=UsuarioResponseNested,
+    responses=exceptions.not_found,
+)
+async def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):  # noqa: B008
     consulta = select(Usuario).where(Usuario.id == usuario_id)
     resultado = db.exec(consulta)
     usuario = resultado.first()
@@ -40,8 +46,8 @@ async def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
     return usuario
 
 
-@router.post("/", response_model=UsuarioResponse)
-async def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=UsuarioResponse, responses=exceptions.conflict_usuario)
+async def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):  # noqa: B008
     validar_dni(usuario.dni, db)
     nuevo_usuario = Usuario.model_validate(usuario)
     db.add(nuevo_usuario)
@@ -50,9 +56,15 @@ async def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     return nuevo_usuario
 
 
-@router.put("/{usuario_id}", response_model=UsuarioResponse)
+@router.put(
+    "/{usuario_id}",
+    response_model=UsuarioResponse,
+    responses={**exceptions.not_found, **exceptions.conflict_usuario},
+)
 async def actualizar_usuario(
-    usuario_id: int, usuario: UsuarioCreate, db: Session = Depends(get_db)
+    usuario_id: int,
+    usuario: UsuarioCreate,
+    db: Session = Depends(get_db),  # noqa: B008
 ):
     usuario_actualizado = db.get(Usuario, usuario_id)
     if not usuario_actualizado:
@@ -68,8 +80,8 @@ async def actualizar_usuario(
     return usuario_actualizado
 
 
-@router.delete("/{usuario_id}")
-async def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
+@router.delete("/{usuario_id}", responses=exceptions.not_found)
+async def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):  # noqa: B008
     usuario = db.get(Usuario, usuario_id)
     if not usuario:
         raise HTTPException(status_code=404, detail=exceptions.USUARIO_NO_ENCONTRADO)

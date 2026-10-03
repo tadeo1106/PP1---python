@@ -1,8 +1,7 @@
-from pathlib import Path
 
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, create_engine
 
-url = f"sqlite:///db_turnos_sqlmodel.db"
+url = "sqlite:///db_turnos_sqlmodel.db"
 
 engine = create_engine(url, connect_args={"check_same_thread": False})
 

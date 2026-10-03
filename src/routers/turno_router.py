@@ -48,7 +48,7 @@ def obtener_turnos(
     if hasta:
         consulta = consulta.where(Turno.fecha <= hasta)
 
-    consulta = consulta.order_by(Turno.fecha, Turno.hora)  # pyright: ignore[reportArgumentType]
+    consulta = consulta.order_by(Turno.fecha, Turno.hora)
 
     return db.exec(consulta).all()
 

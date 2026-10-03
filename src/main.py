@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 
-from src.database.database import SQLModel, engine
 from src.routers.turno_router import router
 from src.routers.usuario_router import router as usuario_router
 
