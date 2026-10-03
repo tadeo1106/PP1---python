@@ -1,31 +1,29 @@
-from pydantic import BaseModel, ConfigDict  # noqa: I001
 from datetime import date, time
 
+from sqlmodel import Field, SQLModel
+
 from .tipos import (
-    configSchemaDni,
     configSchemaEstado,
-    configSchemaNombre,
     configSchemaNombreServicio,
     configSchemasID,
 )
 
 
-
-class TurnoBase(BaseModel):
-    cliente_nombre: configSchemaNombre
-    cliente_dni: configSchemaDni
+class TurnoBase(SQLModel):
     servicio_nombre: configSchemaNombreServicio
     fecha: date
     hora: time
+    usuario_id: int = Field(foreign_key="usuario.id")
+    estado: configSchemaEstado
+
 
 class TurnoCreate(TurnoBase):
     pass
 
+
 class TurnoUpdate(TurnoBase):
     pass
- 
+
+
 class TurnoResponse(TurnoBase):
     id: configSchemasID
-    estado: configSchemaEstado
-
-    model_config = ConfigDict(from_attributes=True)

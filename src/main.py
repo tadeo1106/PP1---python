@@ -1,13 +1,11 @@
 from fastapi import FastAPI
 
-import src.models
 from src.database.database import SQLModel, engine
 from src.routers.turno_router import router
-
-SQLModel.metadata.create_all(bind=engine)
-
+from src.routers.usuario_router import router as usuario_router
 
 app = FastAPI(title="turnosApi")
 
 
 app.include_router(router, prefix="")
+app.include_router(usuario_router, prefix="")

@@ -1,24 +1,13 @@
-from datetime import date, time
+from typing import TYPE_CHECKING, Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship
 
+from src.schemas.turnos import TurnoBase
 
-class TurnoBase(SQLModel):
-    cliente_nombre: str
-    cliente_dni: str
-    servicio_nombre: str
-    fecha: date
-    hora: time
-    estado: str = "Pendiente"
+if TYPE_CHECKING:
+    from src.models.usuario_model import Usuario
 
 
 class Turno(TurnoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-
-
-class TurnoCreate(TurnoBase):
-    pass
-
-
-class TurnoResponse(TurnoBase):
-    id: int
+    usuario: Optional["Usuario"] = Relationship(back_populates="turnos")
