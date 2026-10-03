@@ -43,6 +43,7 @@ rich==15.0.0
 rich-click==1.9.9
 rich-toolkit==0.19.7
 rignore==0.7.6
+ruff==0.16.10
 sentry-sdk==2.58.0
 shandy-sqlfmt==0.32.0
 shellingham==1.5.4
